@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HARVEST SOS — Technical Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #05080C;
+  --surf:   #0A1220;
+  --surf2:  #101A28;
+  --border: #1A2B3A;
+  --line:   #2A4A6A;
+  --line-b: #4A8AB0;
+  --red:    #E03040;
+  --red-d:  rgba(224,48,64,0.15);
+  --green:  #00C97A;
+  --amber:  #FF9200;
+  --cyan:   #40B8E0;
+  --text:   #C8E0F4;
+  --mid:    #7090A8;
+  --muted:  #3A5060;
+  --fd: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --fm: 'IBM Plex Mono', 'Courier New', monospace;
+  --fb: 'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); color: var(--text); scroll-behavior: smooth; }
+body { font-family: var(--fb); font-size: 14px; line-height: 1.6; padding: 0; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5,8,12,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px max(20px,4vw);
+  display: flex; gap: 24px; align-items: center;
+}
+.nav-brand { font-family: var(--fd); font-weight: 800; font-size: 18px; letter-spacing: 0.04em; color: var(--text); }
+.nav-brand span { color: var(--red); }
+nav a { font-family: var(--fm); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); text-decoration: none; }
+nav a:hover { color: var(--cyan); }
+
+/* SECTIONS */
+.section {
+  padding: 56px max(24px,5vw) 48px;
+  border-bottom: 1px solid var(--border);
+}
+.sec-label {
+  font-family: var(--fm); font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--red); margin-bottom: 10px;
+}
+.sec-title {
+  font-family: var(--fd); font-weight: 800;
+  font-size: clamp(26px,4vw,48px); line-height: 1;
+  letter-spacing: -0.01em; margin-bottom: 32px;
+}
+.sec-title em { font-style: normal; color: var(--cyan); }
+
+/* SPEC TABLE */
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2px; margin-bottom: 32px;
+}
+.spec-card { background: var(--surf); padding: 0; }
+.spec-card-hdr {
+  background: var(--surf2);
+  padding: 10px 18px;
+  font-family: var(--fd); font-weight: 700; font-size: 15px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-left: 3px solid var(--red);
+}
+.spec-rows { padding: 0; }
+.spec-row {
+  display: grid; grid-template-columns: 180px 1fr;
+  border-bottom: 1px solid var(--border); padding: 8px 18px;
+  align-items: start; gap: 12px;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-k { font-family: var(--fm); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid); padding-top: 2px; }
+.spec-v { font-size: 13px; color: var(--text); line-height: 1.45; }
+.spec-v em { font-style: normal; color: var(--amber); }
+
+/* DESCRIPTION BLOCK */
+.desc-block {
+  background: var(--surf); border-left: 3px solid var(--cyan);
+  padding: 20px 24px; margin-bottom: 20px;
+  font-size: 13px; color: var(--mid); line-height: 1.7;
+  max-width: 860px;
+}
+.desc-block strong { color: var(--text); }
+.desc-block code {
+  font-family: var(--fm); font-size: 11px;
+  background: var(--surf2); color: var(--cyan);
+  padding: 1px 5px; border-radius: 2px;
+}
+
+/* DRAWING PANELS */
+.drawing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: 3px;
+}
+.drawing-panel {
+  background: var(--surf);
+  padding: 24px;
+}
+.drawing-label {
+  font-family: var(--fm); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--cyan);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.drawing-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--line);
+}
+svg.drawing { width: 100%; height: auto; overflow: visible; }
+
+/* Grid lines inside SVG */
+.grid-line { stroke: var(--line); stroke-width: 0.5; opacity: 0.4; }
+.dim-line { stroke: var(--cyan); stroke-width: 0.8; stroke-dasharray: 3,3; }
+.dim-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; fill: #40B8E0; }
+.comp-outline { fill: none; stroke: #4A8AB0; stroke-width: 1.5; }
+.comp-fill { fill: #0D1C2A; stroke: #4A8AB0; stroke-width: 1.5; }
+.comp-fill-2 { fill: #0F2030; stroke: #3A6080; stroke-width: 1; }
+.pv-cell { fill: #0A1828; stroke: #2A4A8A; stroke-width: 0.8; }
+.teg-pad { fill: #1A2A1A; stroke: #3A7A4A; stroke-width: 1; }
+.coil { fill: none; stroke: #7A5A30; stroke-width: 1.2; }
+.led-r { fill: rgba(200,40,50,0.6); stroke: #E03040; stroke-width: 1; }
+.led-g { fill: rgba(0,120,60,0.5); stroke: #00C97A; stroke-width: 1; }
+.antenna { fill: #1A1400; stroke: #FF9200; stroke-width: 1.5; }
+.piezo { fill: #12102A; stroke: #6A5AB0; stroke-width: 1; }
+.button { fill: #1A0808; stroke: #E03040; stroke-width: 1.2; }
+.usbc { fill: #0A1A2A; stroke: #5A8AB0; stroke-width: 1; }
+.label-line { stroke: #4A8AB0; stroke-width: 0.8; }
+.label-dot { fill: #40B8E0; }
+.label-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; fill: #90B8D0; }
+.label-text-red { font-family: 'IBM Plex Mono', monospace; font-size: 10px; fill: #E05060; }
+.label-text-amb { font-family: 'IBM Plex Mono', monospace; font-size: 10px; fill: #FF9200; }
+.label-text-grn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; fill: #00C97A; }
+.section-line { stroke: #1A3A5A; stroke-width: 1; stroke-dasharray: 6,4; }
+.cross-hatch { fill: url(#hatch); }
+.band-body { fill: #0D1828; stroke: #3A5A7A; stroke-width: 1.5; }
+.clasp { fill: #101C28; stroke: #50789A; stroke-width: 1.2; }
+.face-glass { fill: rgba(13,28,50,0.6); stroke: #5A8AB0; stroke-width: 1.5; }
+
+/* SCHEMATIC */
+.sch-box { fill: var(--surf2); stroke: var(--line-b); stroke-width: 1.5; rx: 3; }
+.sch-box-red { fill: #1A0A0C; stroke: var(--red); stroke-width: 1.5; }
+.sch-box-grn { fill: #0A1812; stroke: var(--green); stroke-width: 1.5; }
+.sch-box-amb { fill: #1A1200; stroke: var(--amber); stroke-width: 1.5; }
+.sch-box-cyan { fill: #0A1828; stroke: var(--cyan); stroke-width: 1.5; }
+.sch-box-dash { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 5,4; }
+.pwr-line { stroke: var(--red); stroke-width: 2; fill: none; }
+.ctrl-line { stroke: #406888; stroke-width: 1.2; fill: none; stroke-dasharray: 4,3; }
+.data-line { stroke: var(--green); stroke-width: 1; fill: none; stroke-dasharray: 2,2; }
+.sch-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #90B8D0; text-anchor: middle; }
+.sch-label-sm { font-family: 'IBM Plex Mono', monospace; font-size: 9px; fill: #4A7090; text-anchor: middle; }
+.sch-label-red { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #E06070; text-anchor: middle; }
+.sch-label-grn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #40D090; text-anchor: middle; }
+.sch-label-amb { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #FFB040; text-anchor: middle; }
+.sch-label-cyan { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #40B8E0; text-anchor: middle; }
+.sch-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; fill: #C8E0F4; text-anchor: middle; }
+.sch-title-sm { font-family: 'IBM Plex Mono', monospace; font-size: 9px; fill: #5A8090; text-anchor: middle; }
+.arrow { fill: var(--red); }
+.arrow-ctrl { fill: #406888; }
+
+/* LEGEND */
+.legend {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  padding: 16px 0; margin-top: 12px;
+}
+.leg-item { display: flex; align-items: center; gap: 8px; font-family: var(--fm); font-size: 10px; color: var(--mid); }
+.leg-swatch { width: 24px; height: 3px; }
+
+/* MATERIAL TABLE */
+.mat-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.mat-table th { background: var(--surf2); padding: 8px 16px; text-align: left; font-family: var(--fm); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.mat-table td { padding: 9px 16px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--mid); vertical-align: top; }
+.mat-table tr:last-child td { border-bottom: none; }
+.mat-table td:first-child { color: var(--text); font-weight: 500; width: 180px; }
+.mat-table td:nth-child(2) { color: var(--cyan); font-family: var(--fm); font-size: 11px; width: 160px; }
+
+@media (max-width: 720px) {
+  .drawing-grid { grid-template-columns: 1fr; }
+  .spec-grid { grid-template-columns: 1fr; }
+  .spec-row { grid-template-columns: 140px 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">HARVEST <span>SOS</span></div>
+  <a href="#spec">3D Spec</a>
+  <a href="#drawings">Drawings</a>
+  <a href="#internals">Internals</a>
+  <a href="#schematic">Schematic</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 1 — 3D MODEL SPECIFICATION                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="spec">
+  <div class="sec-label">Section 01 / Technical Reference</div>
+  <div class="sec-title">3D Model <em>Specification</em></div>
+
+  <div class="desc-block">
+    <strong>Overview:</strong> HARVEST SOS is a wrist-worn device in two integrated parts — the <code>BASE BAND</code> (energy harvesting) and the <code>SOS POD</code> (electronics + beacon module). The pod attaches to the band via a standard 24 mm lug system with spring bars. When assembled, it resembles a chunky sport smartwatch. All dimensions below are precise — use them as absolute targets for the 3D model.
+  </div>
+
+  <!-- SOS POD SPEC -->
+  <div class="spec-grid">
+    <div class="spec-card">
+      <div class="spec-card-hdr">SOS Pod — Outer Housing</div>
+      <div class="spec-rows">
+        <div class="spec-row"><div class="spec-k">Overall size</div><div class="spec-v">48 mm wide × 44 mm tall × 14 mm thick</div></div>
+        <div class="spec-row"><div class="spec-k">Corner radius</div><div class="spec-v">8 mm (squircle profile — not full circle, not sharp)</div></div>
+        <div class="spec-row"><div class="spec-k">Body material</div><div class="spec-v">Machined aluminium 6061-T6, matte black anodised</div></div>
+        <div class="spec-row"><div class="spec-k">Lug width</div><div class="spec-v">24 mm (narrows from 44 mm pod body; standard spring-bar slot)</div></div>
+        <div class="spec-row"><div class="spec-k">Lug depth</div><div class="spec-v">12 mm per lug (top + bottom), 2.5 mm spring-bar hole ∅</div></div>
+        <div class="spec-row"><div class="spec-k">Top edge (12 o'clock)</div><div class="spec-v"><em>LoRa antenna slot</em> — 38 mm × 2.5 mm channel, filled with black PEEK (non-conductive). Flush with top surface.</div></div>
+        <div class="spec-row"><div class="spec-k">Right edge (3 o'clock)</div><div class="spec-v"><em>SOS button</em> — recessed 1.5 mm, ∅ 7 mm, rubber tactile dome. Centre at 18 mm from top edge of pod.</div></div>
+        <div class="spec-row"><div class="spec-k">Bottom edge (6 o'clock)</div><div class="spec-v"><em>USB-C port</em> — 9 mm × 4 mm opening, 1 mm depth; covered by removable rubber flap (separate part, snaps into slot).</div></div>
+        <div class="spec-row"><div class="spec-k">Left edge (9 o'clock)</div><div class="spec-v">Clean. No ports or buttons. Slight chamfer only (0.5 mm × 45°).</div></div>
+        <div class="spec-row"><div class="spec-k">Front face</div><div class="spec-v">2.5 mm polycarbonate lens, flush-mounted, UV-bonded into bezel recess. Inner surface has anti-reflective coating. See face features below.</div></div>
+        <div class="spec-row"><div class="spec-k">Rear face</div><div class="spec-v">Flat, anodised Al. <em>GPS antenna window</em>: 18 mm × 12 mm non-metal (PEEK) insert, centred horizontally, 8 mm from bottom edge. Electrical contact pads (6× gold pins, 1.5 mm ∅, spring-loaded) on lug rail areas.</div></div>
+        <div class="spec-row"><div class="spec-k">Wall thickness</div><div class="spec-v">1.8 mm minimum (sides); 2.5 mm (top/bottom edges near lugs)</div></div>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-hdr">SOS Pod — Face Features</div>
+      <div class="spec-rows">
+        <div class="spec-row"><div class="spec-k">LED Strobe (red)</div><div class="spec-v">∅ 10 mm circular aperture, top-right quadrant of face. Centre at: 33 mm from left edge, 12 mm from top edge. Frosted red polycarbonate lens, 2 mm thick.</div></div>
+        <div class="spec-row"><div class="spec-k">Status LED (green)</div><div class="spec-v">∅ 5 mm, bottom-centre of face. Centre at: 24 mm from left edge, 38 mm from top edge.</div></div>
+        <div class="spec-row"><div class="spec-k">Antenna indicator line</div><div class="spec-v">Subtle 0.5 mm engraved line along inner face, 3 mm below top edge, 32 mm long. No fill — just a decorative indicator showing antenna direction.</div></div>
+        <div class="spec-row"><div class="spec-k">Face bezel recess</div><div class="spec-v">1.0 mm inset around full perimeter, 1.5 mm wide — creates bezel shadow where lens meets housing.</div></div>
+        <div class="spec-row"><div class="spec-k">Engravings (rear)</div><div class="spec-v">"HARVEST SOS" + device ID sticker slot (10 mm × 6 mm). Engraved 0.3 mm deep, top of rear face.</div></div>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-hdr">Base Band — Geometry</div>
+      <div class="spec-rows">
+        <div class="spec-row"><div class="spec-k">Band width</div><div class="spec-v">26 mm (constant across full length)</div></div>
+        <div class="spec-row"><div class="spec-k">Clasp arm length</div><div class="spec-v">120 mm (longer arm — wraps over wrist)</div></div>
+        <div class="spec-row"><div class="spec-k">Buckle arm length</div><div class="spec-v">80 mm (shorter arm — holds buckle end)</div></div>
+        <div class="spec-row"><div class="spec-k">Band thickness (std)</div><div class="spec-v">4.5 mm (most of band length)</div></div>
+        <div class="spec-row"><div class="spec-k">EM coil housing</div><div class="spec-v">Thickened section on clasp arm, 35 mm from lug end. Circular raised section ∅ 22 mm × 8.5 mm (total thickness in this zone = 12 mm). Smooth bump, not angular.</div></div>
+        <div class="spec-row"><div class="spec-k">Lug transition</div><div class="spec-v">Band width narrows from 26 mm to 24 mm over a 6 mm taper section at each lug end.</div></div>
+        <div class="spec-row"><div class="spec-k">Inner surface contour</div><div class="spec-v">Concave lengthwise (R ≈ 80 mm arc) to fit wrist. Two raised TEG contact pads (see below).</div></div>
+        <div class="spec-row"><div class="spec-k">Material (band body)</div><div class="spec-v">Black fluoroelastomer (FKM rubber), Shore 60A hardness. UV and sweat resistant.</div></div>
+        <div class="spec-row"><div class="spec-k">Clasp</div><div class="spec-v">Deployant (butterfly) style, 304 stainless steel, brushed finish. Folded thickness ≈ 5 mm. Width matches band (26 mm). Attaches at end of buckle arm.</div></div>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-hdr">Base Band — Surface Features</div>
+      <div class="spec-rows">
+        <div class="spec-row"><div class="spec-k">PV cells (outer surface)</div><div class="spec-v">12 flexible GaAs cells in a 3-column × 4-row grid. Each cell: 8 mm × 14 mm, 1 mm gap between cells. Grid starts 8 mm from lug end, runs 72 mm along clasp arm. Cells are 0.2 mm proud of band surface. Dark blue-grey colour.</div></div>
+        <div class="spec-row"><div class="spec-k">TEG contact pads (inner)</div><div class="spec-v">2 raised metal pads (copper-nickel alloy), each 16 mm × 20 mm, 0.6 mm proud of inner surface. Positioned symmetrically: centres at 30 mm and 70 mm from lug end of clasp arm, centred across band width. Smooth and polished (skin contact).</div></div>
+        <div class="spec-row"><div class="spec-k">Piezo ridges (inner)</div><div class="spec-v">2 transverse ridges across the inner surface, 1.2 mm tall × 3 mm wide × 18 mm long. Embedded piezo film beneath. Positions: 50 mm and 80 mm from lug end of clasp arm. Ridges flex with wrist movement.</div></div>
+        <div class="spec-row"><div class="spec-k">Electrical channel</div><div class="spec-v">Two 1.5 mm × 1 mm channels run along each side edge of the band (left and right edges, full length). Gold-plated copper conductors embedded — carry power from harvesters to lug spring contacts.</div></div>
+        <div class="spec-row"><div class="spec-k">Ventilation</div><div class="spec-v">5 pairs of 2 mm × 6 mm elongated slots on inner surface, evenly spaced on buckle arm, to reduce heat buildup and improve TEG ΔT.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MATERIAL REFERENCE -->
+  <p style="font-family:var(--fm);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;">Material / Colour Reference</p>
+  <table class="mat-table">
+    <thead><tr><th>Zone</th><th>Material</th><th>Finish / Colour</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Pod body</td><td>Al 6061-T6</td><td>Matte black anodised (#1A1A1A)</td><td>All exposed metal faces</td></tr>
+      <tr><td>Antenna slot</td><td>PEEK polymer</td><td>Flat black (#141414)</td><td>Must be non-conductive for RF transparency</td></tr>
+      <tr><td>GPS window (rear)</td><td>PEEK polymer</td><td>Flat black, slightly recessed 0.2 mm</td><td>Non-metal for GPS satellite signal</td></tr>
+      <tr><td>Pod face lens</td><td>Polycarbonate</td><td>Dark tint, 30% transmission, anti-glare</td><td>Electronics visible as silhouettes inside</td></tr>
+      <tr><td>LED strobe lens</td><td>Frosted red polycarbonate</td><td>Red (#C02020) when off; bright red (#FF1010) when active</td><td>Separate insert, snaps into pod face</td></tr>
+      <tr><td>SOS button</td><td>Rubber dome + Al cap</td><td>Red anodised Al cap, black rubber surround</td><td>Recessed 1.5 mm, requires firm press</td></tr>
+      <tr><td>Band body</td><td>FKM fluoroelastomer</td><td>Matte black (#111111)</td><td>Overmoulded over conductor channels</td></tr>
+      <tr><td>PV cells</td><td>Flexible GaAs thin-film</td><td>Dark metallic blue-grey, rectangular cells</td><td>Cells have visible silver grid lines</td></tr>
+      <tr><td>TEG pads</td><td>Cu-Ni alloy</td><td>Brushed silver-grey</td><td>Polished for skin contact</td></tr>
+      <tr><td>Clasp</td><td>304 SS</td><td>Brushed silver</td><td>Butterfly fold, matt brushed finish</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 2 — ORTHOGRAPHIC DRAWINGS                     -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="drawings">
+  <div class="sec-label">Section 02 / Technical Drawings</div>
+  <div class="sec-title">Orthographic <em>Views</em></div>
+
+  <div class="drawing-grid">
+
+    <!-- FRONT VIEW -->
+    <div class="drawing-panel">
+      <div class="drawing-label">View A — Front (Face-On)</div>
+      <svg class="drawing" viewBox="0 0 520 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M20,0 L0,0 0,20" fill="none" stroke="#1A2B3A" stroke-width="0.4"/>
+          </pattern>
+        </defs>
+        <rect width="520" height="420" fill="#060C14"/>
+        <rect width="520" height="420" fill="url(#grid)"/>
+
+        <!-- Band top arm -->
+        <rect x="214" y="20" width="72" height="104" rx="5" class="band-body"/>
+        <!-- PV cells on top arm (3×4 grid) -->
+        <rect x="218" y="24" width="20" height="22" class="pv-cell"/> <rect x="242" y="24" width="20" height="22" class="pv-cell"/> <rect x="266" y="24" width="20" height="22" class="pv-cell"/>
+        <rect x="218" y="49" width="20" height="22" class="pv-cell"/> <rect x="242" y="49" width="20" height="22" class="pv-cell"/> <rect x="266" y="49" width="20" height="22" class="pv-cell"/>
+        <rect x="218" y="74" width="20" height="22" class="pv-cell"/> <rect x="242" y="74" width="20" height="22" class="pv-cell"/> <rect x="266" y="74" width="20" height="22" class="pv-cell"/>
+        <rect x="218" y="99" width="20" height="22" class="pv-cell"/> <rect x="242" y="99" width="20" height="22" class="pv-cell"/> <rect x="266" y="99" width="20" height="22" class="pv-cell"/>
+
+        <!-- Band bottom arm -->
+        <rect x="214" y="256" width="72" height="90" rx="5" class="band-body"/>
+        <!-- PV cells on bottom arm (3×3) -->
+        <rect x="218" y="260" width="20" height="22" class="pv-cell"/> <rect x="242" y="260" width="20" height="22" class="pv-cell"/> <rect x="266" y="260" width="20" height="22" class="pv-cell"/>
+        <rect x="218" y="286" width="20" height="22" class="pv-cell"/> <rect x="242" y="286" width="20" height="22" class="pv-cell"/> <rect x="266" y="286" width="20" height="22" class="pv-cell"/>
+        <rect x="218" y="312" width="20" height="22" class="pv-cell"/> <rect x="242" y="312" width="20" height="22" class="pv-cell"/> <rect x="266" y="312" width="20" height="22" class="pv-cell"/>
+
+        <!-- Clasp indicator at bottom -->
+        <rect x="220" y="346" width="60" height="16" rx="2" class="clasp"/>
+        <line x1="226" y1="346" x2="226" y2="362" stroke="#5A8AB0" stroke-width="0.8"/>
+        <line x1="274" y1="346" x2="274" y2="362" stroke="#5A8AB0" stroke-width="0.8"/>
+        <line x1="226" y1="354" x2="274" y2="354" stroke="#5A8AB0" stroke-width="0.6" stroke-dasharray="2,2"/>
+
+        <!-- POD body -->
+        <rect x="178" y="124" width="144" height="132" rx="24" class="comp-fill"/>
+        <!-- Face glass inset -->
+        <rect x="183" y="129" width="134" height="122" rx="21" class="face-glass"/>
+
+        <!-- LoRa antenna slot (top of pod) -->
+        <rect x="196" y="124" width="108" height="5" fill="#1A1400" stroke="#FF9200" stroke-width="1"/>
+        <text x="250" y="122" class="label-text-amb" text-anchor="middle" style="font-size:8px;">LoRa ANTENNA SLOT (38mm, PEEK)</text>
+
+        <!-- LED strobe top-right -->
+        <circle cx="308" cy="148" r="10" class="led-r"/>
+        <circle cx="308" cy="148" r="6" fill="#E03040" opacity="0.4"/>
+        <!-- LED label -->
+        <line x1="318" y1="148" x2="360" y2="138" class="label-line"/>
+        <circle cx="318" cy="148" r="2" class="label-dot"/>
+        <text x="364" y="136" class="label-text-red">LED STROBE (∅10mm)</text>
+
+        <!-- Status LED bottom-center -->
+        <circle cx="250" cy="238" r="5" class="led-g"/>
+        <circle cx="250" cy="238" r="2.5" fill="#00C97A" opacity="0.5"/>
+
+        <!-- Antenna indicator engraving line -->
+        <line x1="200" y1="136" x2="300" y2="136" stroke="#3A5A80" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+        <!-- Button on right edge -->
+        <rect x="320" y="168" width="10" height="24" rx="4" class="button"/>
+        <line x1="330" y1="178" x2="380" y2="160" class="label-line"/>
+        <circle cx="330" cy="178" r="2" class="label-dot"/>
+        <text x="383" y="158" class="label-text-red">SOS BUTTON (∅7mm)</text>
+        <text x="383" y="168" class="label-text" style="font-size:9px;">HOLD 3s TO ACTIVATE</text>
+
+        <!-- USB-C port bottom -->
+        <rect x="236" y="253" width="28" height="5" rx="2" class="usbc"/>
+        <line x1="250" y1="258" x2="250" y2="280" class="label-line"/>
+        <line x1="250" y1="280" x2="148" y2="280" class="label-line"/>
+        <text x="144" y="278" class="label-text" text-anchor="end">USB-C CHARGE PORT</text>
+        <text x="144" y="288" class="label-text" text-anchor="end" style="font-size:8px;">(UNDER RUBBER FLAP)</text>
+
+        <!-- Status LED label -->
+        <line x1="250" y1="243" x2="250" y2="268" class="label-line"/>
+        <line x1="250" y1="268" x2="148" y2="268" class="label-line"/>
+        <text x="144" y="266" class="label-text" text-anchor="end">STATUS LED (∅5mm)</text>
+
+        <!-- PV cells label -->
+        <line x1="178" y1="62" x2="90" y2="50" class="label-line"/>
+        <circle cx="178" cy="62" r="2" class="label-dot"/>
+        <text x="88" y="48" class="label-text-grn" text-anchor="end">FLEXIBLE PV CELLS</text>
+        <text x="88" y="58" class="label-text" text-anchor="end" style="font-size:8px;">3×4 GRID, 8×14mm EACH</text>
+
+        <!-- Lug label -->
+        <line x1="214" y1="124" x2="160" y2="110" class="label-line"/>
+        <circle cx="214" cy="124" r="2" class="label-dot"/>
+        <text x="158" y="108" class="label-text" text-anchor="end">24mm LUGS</text>
+
+        <!-- Clasp label -->
+        <line x1="280" y1="354" x2="350" y2="368" class="label-line"/>
+        <circle cx="280" cy="354" r="2" class="label-dot"/>
+        <text x="352" y="366" class="label-text">DEPLOYANT CLASP (304 SS)</text>
+
+        <!-- Dimension lines -->
+        <line x1="140" y1="124" x2="140" y2="256" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="136" y1="124" x2="144" y2="124" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="136" y1="256" x2="144" y2="256" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="134" y="192" class="dim-text" text-anchor="end" transform="rotate(-90,134,192)">44 mm</text>
+
+        <line x1="178" y1="392" x2="322" y2="392" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="178" y1="388" x2="178" y2="396" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="322" y1="388" x2="322" y2="396" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="250" y="408" class="dim-text" text-anchor="middle">48 mm</text>
+
+        <line x1="214" y1="408" x2="286" y2="408" stroke="#40B8E0" stroke-width="0.6" stroke-dasharray="2,3"/>
+        <line x1="214" y1="404" x2="214" y2="412" stroke="#40B8E0" stroke-width="0.6"/>
+        <line x1="286" y1="404" x2="286" y2="412" stroke="#40B8E0" stroke-width="0.6"/>
+        <text x="250" y="420" class="dim-text" text-anchor="middle" style="font-size:9px;">24 mm (lug)</text>
+
+        <!-- View label -->
+        <text x="10" y="415" class="label-text" style="font-size:9px;">FRONT VIEW — FACE ON</text>
+        <text x="10" y="405" class="label-text" style="font-size:8px;fill:#3A5060;">ALL DIMS IN MM</text>
+      </svg>
+    </div>
+
+    <!-- SIDE VIEW -->
+    <div class="drawing-panel">
+      <div class="drawing-label">View B — Right Side Profile</div>
+      <svg class="drawing" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+        <rect width="420" height="420" fill="#060C14"/>
+        <rect width="420" height="420" fill="url(#grid)"/>
+
+        <!-- Band (top arm side view - seen as thick rectangle going left/right from pod top) -->
+        <!-- In side view (looking at right edge of pod): band arms go left and right -->
+        <!-- Top band arm: goes left (clasp arm, 120mm) and right-ish -->
+        <!-- Shown as a rectangle extending left: x from 80 to 220 (pod left edge), thick = 26mm wide but in side view = depth 14mm... -->
+
+        <!-- Actually in side view: pod is 14mm thick = 42px (at 3px/mm), 44mm tall = 132px -->
+        <!-- Band arms appear going left (toward viewer's left) from pod top/bottom lugs -->
+        <!-- Band thickness = 4.5mm = 13.5px, band width (26mm) is PERPENDICULAR to view so not seen as width -->
+
+        <!-- Pod (side view): 14mm wide × 44mm tall = 42px × 132px -->
+        <!-- Center pod at x=210, y=140-to-272 -->
+        <rect x="189" y="124" width="42" height="132" rx="8" class="comp-fill"/>
+        <!-- LoRa slot visible as thin rectangle on top of pod -->
+        <rect x="190" y="124" width="40" height="4" fill="#1A1400" stroke="#FF9200" stroke-width="1"/>
+        <!-- Button visible on right side (now the front face in this view) -->
+        <rect x="231" y="168" width="10" height="24" rx="4" class="button"/>
+        <!-- USB-C visible on bottom edge -->
+        <rect x="203" y="252" width="18" height="5" rx="2" class="usbc"/>
+
+        <!-- Rear face of pod (left side in this view) -->
+        <line x1="189" y1="124" x2="189" y2="256" stroke="#3A6080" stroke-width="1.5"/>
+        <!-- GPS antenna window (PEEK insert, visible on rear) -->
+        <rect x="185" y="212" width="4" height="20" fill="#1A1400" stroke="#3A5060" stroke-width="0.8"/>
+        <text x="182" y="222" class="label-text" text-anchor="end" style="font-size:8px;">GPS</text>
+        <text x="182" y="230" class="label-text" text-anchor="end" style="font-size:8px;">WINDOW</text>
+
+        <!-- Band top arm (side view: appears as thin horizontal strip going left) -->
+        <!-- Band thickness in side view = 4.5mm = ~14px; band arm length (into/out of view) is the 26mm width -->
+        <!-- But we're looking at the side of the band: we see it as a strip going leftward -->
+        <!-- Height = band thickness 4.5mm = 14px; extends left from pod lug (x=189) -->
+        <rect x="49" y="117" width="140" height="14" rx="3" class="band-body"/>
+
+        <!-- EM coil bump (on clasp arm, 35mm from lug = 105px left of lug) -->
+        <!-- In side view: appears as a raised circle/oval on top of band -->
+        <ellipse cx="104" cy="117" rx="22" ry="6" fill="#0D1828" stroke="#4A7AB0" stroke-width="1.2"/>
+        <ellipse cx="104" cy="117" rx="16" ry="4" fill="none" stroke="#3A6090" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+        <!-- Band bottom arm -->
+        <rect x="49" y="249" width="140" height="14" rx="3" class="band-body"/>
+        <!-- TEG pads (side view: visible as raised nubs on inner surface of band) -->
+        <rect x="75" y="263" width="20" height="4" rx="1" class="teg-pad"/>
+        <rect x="115" y="263" width="20" height="4" rx="1" class="teg-pad"/>
+
+        <!-- Clasp (at end of shorter arm, right of pod) -->
+        <!-- Shorter arm goes right from pod bottom lug in this view? No... -->
+        <!-- Let's show the clasp below the main band sections -->
+        <rect x="330" y="249" width="40" height="14" rx="2" class="clasp"/>
+        <line x1="340" y1="249" x2="340" y2="263" stroke="#5A8AB0" stroke-width="0.8"/>
+        <line x1="360" y1="249" x2="360" y2="263" stroke="#5A8AB0" stroke-width="0.8"/>
+
+        <!-- Pod height dimension -->
+        <line x1="260" y1="124" x2="260" y2="256" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="256" y1="124" x2="264" y2="124" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="256" y1="256" x2="264" y2="256" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="270" y="192" class="dim-text" transform="rotate(90,270,192)">44 mm</text>
+
+        <!-- Pod depth dimension -->
+        <line x1="189" y1="290" x2="231" y2="290" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="189" y1="286" x2="189" y2="294" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="231" y1="286" x2="231" y2="294" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="210" y="306" class="dim-text" text-anchor="middle">14 mm</text>
+
+        <!-- Band length dimension -->
+        <line x1="49" y1="100" x2="189" y2="100" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="49" y1="96" x2="49" y2="104" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="189" y1="96" x2="189" y2="104" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="119" y="96" class="dim-text" text-anchor="middle">120 mm (clasp arm)</text>
+
+        <!-- Labels -->
+        <line x1="104" y1="111" x2="80" y2="86" class="label-line"/>
+        <circle cx="104" cy="111" r="2" class="label-dot"/>
+        <text x="78" y="84" class="label-text" text-anchor="end">EM COIL HOUSING</text>
+        <text x="78" y="93" class="label-text" text-anchor="end" style="font-size:8px;">∅22mm × 8.5mm RAISED</text>
+
+        <line x1="85" y1="267" x2="60" y2="284" class="label-line"/>
+        <circle cx="85" cy="267" r="2" class="label-dot"/>
+        <text x="58" y="294" class="label-text-grn" text-anchor="end">TEG CONTACT PADS</text>
+
+        <line x1="231" y1="180" x2="300" y2="162" class="label-line"/>
+        <text x="302" y="160" class="label-text-red">SOS BUTTON</text>
+
+        <line x1="210" y1="257" x2="276" y2="274" class="label-line"/>
+        <text x="278" y="272" class="label-text">USB-C PORT</text>
+
+        <line x1="231" y1="124" x2="300" y2="110" class="label-line"/>
+        <text x="302" y="108" class="label-text-amb">ANTENNA SLOT</text>
+
+        <text x="10" y="415" class="label-text" style="font-size:9px;">RIGHT SIDE PROFILE</text>
+      </svg>
+    </div>
+
+    <!-- TOP VIEW -->
+    <div class="drawing-panel" style="grid-column: 1 / -1;">
+      <div class="drawing-label">View C — Top (Plan View, 12 O'Clock Looking Down)</div>
+      <svg class="drawing" viewBox="0 0 860 220" xmlns="http://www.w3.org/2000/svg">
+        <rect width="860" height="220" fill="#060C14"/>
+        <rect width="860" height="220" fill="url(#grid)"/>
+
+        <!-- In TOP VIEW: looking down from above
+             Band goes LEFT (clasp arm, 120mm) and RIGHT (buckle arm, 80mm) from pod
+             Pod is 48mm wide (L-R) × 14mm deep (front-to-back, i.e. top-bottom in this view)
+             Band width (26mm) goes L-R perpendicular to length, visible as 78px height
+        -->
+
+        <!-- Pod: 48mm wide × 14mm deep = 144×42px (using 3px/mm) -->
+        <!-- Center at x=430, y=110 -->
+        <rect x="358" y="89" width="144" height="42" rx="8" fill="#0D1C2A" stroke="#4A8AB0" stroke-width="1.5"/>
+
+        <!-- LoRa antenna slot on front edge of pod (top of pod = front of wrist = y=89) -->
+        <rect x="370" y="89" width="120" height="5" fill="#1A1400" stroke="#FF9200" stroke-width="1"/>
+        <text x="430" y="87" class="label-text-amb" text-anchor="middle" style="font-size:8px;">LoRa SLOT</text>
+
+        <!-- GPS antenna window on rear of pod (y=131) -->
+        <rect x="407" y="127" width="46" height="5" fill="#1A1400" stroke="#3A5060" stroke-width="0.8"/>
+        <text x="430" y="143" class="label-text" text-anchor="middle" style="font-size:8px;">GPS WINDOW (PEEK)</text>
+
+        <!-- Button on right edge of pod (x=502) -->
+        <rect x="500" y="99" width="5" height="20" rx="2" class="button"/>
+
+        <!-- Clasp arm (left) - goes from x=358 (pod left) to x=358-360=0... let's use 358-300=58 for start -->
+        <!-- 120mm at 3px/mm = 360px. From pod left edge x=358 going left: x from 358-360+60=58 to 358 -->
+        <rect x="58" y="97" width="300" height="26" rx="4" class="band-body"/>
+
+        <!-- PV cells on outer surface of clasp arm (outer surface = top edge in top view = y=97) -->
+        <!-- 3 cols × 4 rows visible — but in top view, cols run along length, rows across width -->
+        <!-- Show cells as rectangles along the band -->
+        <!-- Cells 8mm×14mm: 24px × 42px at scale 3 — too tall for band (26mm=78px... wait 26mm=78px and cells are 14mm=42px wide) -->
+        <!-- Actually let me use just horizontal stripe segments to indicate PV cell grid -->
+        <!-- 12 cells, 3 columns (across 26mm width), 4 rows (along length) -->
+        <!-- In top view: we see the outer (top) surface of band, PV cells visible -->
+        <!-- Cell dimensions projected to top: length 14mm = 42px, width 8mm across 26mm band → 3 cells of 8mm with 1mm gaps across 26mm = (3×8+2×1)=26mm ✓ -->
+        <!-- 4 rows along length: 4×(14mm+1mm gap)-1mm gap = 59mm = 177px starting at x=80 -->
+        <rect x="78" y="99" width="40" height="22" class="pv-cell"/> <rect x="120" y="99" width="40" height="22" class="pv-cell"/> <rect x="162" y="99" width="40" height="22" class="pv-cell"/> <rect x="204" y="99" width="40" height="22" class="pv-cell"/>
+
+        <!-- EM coil bump: 35mm from lug end = 105px from x=358, so at x=253; visible as oval in top view -->
+        <ellipse cx="253" cy="110" rx="34" ry="13" fill="#0B1520" stroke="#4A7AB0" stroke-width="1.2"/>
+        <ellipse cx="253" cy="110" rx="24" ry="8" fill="none" stroke="#3A6090" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <circle cx="253" cy="110" r="4" fill="#1A2A40" stroke="#5A80A0" stroke-width="0.8"/>
+
+        <!-- Buckle arm (right) - goes from x=502 (pod right) to 502+240=742 (80mm at 3px/mm = 240px) -->
+        <rect x="502" y="97" width="240" height="26" rx="4" class="band-body"/>
+
+        <!-- TEG pads on inner surface - shown as dashed outlines (inner surface = bottom edge in top view = y=123) -->
+        <!-- TEG pads at 30mm and 70mm from lug end along clasp arm -->
+        <!-- 30mm from lug (x=358): x = 358-90=268 → but EM coil is at x=253, overlap slightly -->
+        <rect x="268" y="119" width="48" height="4" fill="none" stroke="#3A7A4A" stroke-width="1" stroke-dasharray="2,2"/>
+        <rect x="178" y="119" width="48" height="4" fill="none" stroke="#3A7A4A" stroke-width="1" stroke-dasharray="2,2"/>
+
+        <!-- Clasp at far left -->
+        <rect x="30" y="100" width="30" height="20" rx="2" class="clasp"/>
+        <line x1="40" y1="100" x2="40" y2="120" stroke="#5A8AB0" stroke-width="0.8"/>
+        <line x1="50" y1="100" x2="50" y2="120" stroke="#5A8AB0" stroke-width="0.8"/>
+
+        <!-- Dimension: total width of pod -->
+        <line x1="358" y1="170" x2="502" y2="170" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="358" y1="166" x2="358" y2="174" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="502" y1="166" x2="502" y2="174" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="430" y="185" class="dim-text" text-anchor="middle">48 mm (pod)</text>
+
+        <!-- Dimension: clasp arm -->
+        <line x1="58" y1="60" x2="358" y2="60" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="58" y1="56" x2="58" y2="64" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="358" y1="56" x2="358" y2="64" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="208" y="55" class="dim-text" text-anchor="middle">120 mm clasp arm</text>
+
+        <!-- Dimension: buckle arm -->
+        <line x1="502" y1="60" x2="742" y2="60" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="502" y1="56" x2="502" y2="64" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="742" y1="56" x2="742" y2="64" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="622" y="55" class="dim-text" text-anchor="middle">80 mm buckle arm</text>
+
+        <!-- Band width dimension -->
+        <line x1="820" y1="97" x2="820" y2="123" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="816" y1="97" x2="824" y2="97" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="816" y1="123" x2="824" y2="123" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="836" y="113" class="dim-text">26mm</text>
+
+        <!-- Labels -->
+        <line x1="253" y1="97" x2="253" y2="70" class="label-line"/>
+        <text x="253" y="67" class="label-text" text-anchor="middle">EM COIL ASSEMBLY</text>
+
+        <line x1="99" y1="97" x2="99" y2="70" class="label-line"/>
+        <text x="99" y="67" class="label-text-grn" text-anchor="middle">PV CELLS (OUTER)</text>
+
+        <line x1="292" y1="123" x2="292" y2="155" class="label-line"/>
+        <text x="292" y="165" class="label-text-grn" text-anchor="middle" style="font-size:8px;">TEG PADS (INNER — DASHED)</text>
+
+        <text x="10" y="210" class="label-text" style="font-size:9px;">TOP VIEW — PLAN — LOOKING DOWN FROM 12 O'CLOCK</text>
+      </svg>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 3 — INTERNAL / EXPLODED VIEW                  -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="internals">
+  <div class="sec-label">Section 03 / Internal Architecture</div>
+  <div class="sec-title">Exploded <em>Component Diagram</em></div>
+
+  <div class="drawing-grid">
+
+    <!-- EXPLODED POD -->
+    <div class="drawing-panel">
+      <div class="drawing-label">Pod — Exploded Stack (Top to Bottom)</div>
+      <svg class="drawing" viewBox="0 0 520 680" xmlns="http://www.w3.org/2000/svg">
+        <rect width="520" height="680" fill="#060C14"/>
+        <rect width="520" height="680" fill="url(#grid)"/>
+
+        <!-- Explosion center x = 220, components centered there -->
+        <!-- Gap between layers = 28px -->
+        <!-- Layer heights: 8, 12, 22, 30, 30, 22, 18, 10, 8 -->
+
+        <!-- LAYER 1: Face glass -->
+        <g transform="translate(0,20)">
+          <rect x="116" y="0" width="200" height="10" rx="4" fill="rgba(13,28,50,0.5)" stroke="#5A8AB0" stroke-width="1.2" stroke-dasharray="4,2"/>
+          <line x1="316" y1="5" x2="380" y2="5" class="label-line"/>
+          <text x="383" y="3" class="label-text">FACE GLASS</text>
+          <text x="383" y="12" class="label-text" style="font-size:8px;fill:#3A5060;">Polycarbonate, 2.5mm, dark tint</text>
+        </g>
+
+        <!-- LAYER 2: LED + antenna PCB (thin top board) -->
+        <g transform="translate(0,54)">
+          <rect x="116" y="0" width="200" height="16" rx="3" fill="#0A1820" stroke="#3A6080" stroke-width="1.2"/>
+          <rect x="280" y="3" width="16" height="10" rx="2" class="led-r" opacity="0.7"/>
+          <rect x="125" y="4" width="80" height="3" fill="#1A1400" stroke="#FF9200" stroke-width="0.8"/>
+          <circle cx="148" cy="8" r="4" class="led-g" opacity="0.6"/>
+          <line x1="316" y1="8" x2="380" y2="8" class="label-line"/>
+          <text x="383" y="6" class="label-text">LoRa ANTENNA PCB</text>
+          <text x="383" y="15" class="label-text" style="font-size:8px;fill:#3A5060;">SX1276 + antenna + LED driver</text>
+        </g>
+
+        <!-- LAYER 3: Main SoC board -->
+        <g transform="translate(0,102)">
+          <rect x="100" y="0" width="230" height="30" rx="3" fill="#0C1A28" stroke="#4A8AB0" stroke-width="1.5"/>
+          <!-- IC representations -->
+          <rect x="110" y="5" width="28" height="20" rx="2" fill="#101E2E" stroke="#5A90B0" stroke-width="1"/>
+          <rect x="145" y="5" width="22" height="20" rx="2" fill="#101E2E" stroke="#5A90B0" stroke-width="1"/>
+          <rect x="174" y="5" width="40" height="20" rx="2" fill="#101E2E" stroke="#5A90B0" stroke-width="1"/>
+          <rect x="222" y="5" width="30" height="20" rx="2" fill="#101E2E" stroke="#5A90B0" stroke-width="1"/>
+          <!-- IC labels -->
+          <text x="124" y="17" class="sch-label-sm" style="fill:#6090A8;">STM32</text>
+          <text x="156" y="17" class="sch-label-sm" style="fill:#6090A8;">GPS</text>
+          <text x="194" y="17" class="sch-label-sm" style="fill:#6090A8;">NEO-M8N</text>
+          <text x="237" y="17" class="sch-label-sm" style="fill:#6090A8;">SX1276</text>
+          <line x1="330" y1="15" x2="380" y2="15" class="label-line"/>
+          <text x="383" y="13" class="label-text">MAIN CONTROL BOARD</text>
+          <text x="383" y="22" class="label-text" style="font-size:8px;fill:#3A5060;">STM32L0 + u-blox NEO-M8N + LoRa SX1276</text>
+        </g>
+
+        <!-- LAYER 4: LiPo battery -->
+        <g transform="translate(0,160)">
+          <rect x="110" y="0" width="210" height="38" rx="4" fill="#0A1610" stroke="#3A6A3A" stroke-width="1.5"/>
+          <rect x="114" y="4" width="202" height="30" rx="3" fill="#0D1E14" stroke="#2A5A2A" stroke-width="0.8"/>
+          <text x="215" y="23" class="sch-label-grn" style="fill:#40A860;font-size:12px;">Li-Po 400 mAh</text>
+          <line x1="320" y1="19" x2="380" y2="19" class="label-line"/>
+          <text x="383" y="17" class="label-text">LiPo BATTERY</text>
+          <text x="383" y="26" class="label-text" style="font-size:8px;fill:#3A5060;">400 mAh, 3.7V, flat cell</text>
+        </g>
+
+        <!-- LAYER 5: Supercapacitor -->
+        <g transform="translate(0,224)">
+          <rect x="150" y="0" width="130" height="22" rx="10" fill="#0C1820" stroke="#4A8AB0" stroke-width="1.5"/>
+          <ellipse cx="165" cy="11" rx="10" ry="10" fill="#101C2A" stroke="#4A8AB0" stroke-width="1"/>
+          <ellipse cx="265" cy="11" rx="10" ry="10" fill="#101C2A" stroke="#4A8AB0" stroke-width="1"/>
+          <line x1="320" y1="11" x2="380" y2="11" class="label-line"/>
+          <text x="383" y="9" class="label-text">SUPERCAPACITOR</text>
+          <text x="383" y="18" class="label-text" style="font-size:8px;fill:#3A5060;">1 F, 5.5V, burst buffer for LoRa TX</text>
+        </g>
+
+        <!-- LAYER 6: PMIC board (4× ADP5092) -->
+        <g transform="translate(0,274)">
+          <rect x="100" y="0" width="230" height="28" rx="3" fill="#0C1428" stroke="#3A5090" stroke-width="1.5"/>
+          <!-- 4 MPPT chips -->
+          <rect x="106" y="4" width="44" height="20" rx="2" fill="#0F1C36" stroke="#3A5090" stroke-width="1"/>
+          <rect x="154" y="4" width="44" height="20" rx="2" fill="#0F1C36" stroke="#3A5090" stroke-width="1"/>
+          <rect x="202" y="4" width="44" height="20" rx="2" fill="#0F1C36" stroke="#3A5090" stroke-width="1"/>
+          <rect x="250" y="4" width="44" height="20" rx="2" fill="#0F1C36" stroke="#3A5090" stroke-width="1"/>
+          <text x="128" y="16" class="sch-label-sm" style="fill:#5070A0;">ADP5092</text>
+          <text x="176" y="16" class="sch-label-sm" style="fill:#5070A0;">ADP5092</text>
+          <text x="224" y="16" class="sch-label-sm" style="fill:#5070A0;">ADP5092</text>
+          <text x="272" y="16" class="sch-label-sm" style="fill:#5070A0;">ADP5092</text>
+          <line x1="330" y1="14" x2="380" y2="14" class="label-line"/>
+          <text x="383" y="12" class="label-text">MPPT PMIC BOARD</text>
+          <text x="383" y="21" class="label-text" style="font-size:8px;fill:#3A5060;">4× ADP5092 + N-FET gates</text>
+        </g>
+
+        <!-- LAYER 7: N-FET gating board -->
+        <g transform="translate(0,330)">
+          <rect x="120" y="0" width="190" height="18" rx="2" fill="#0A1020" stroke="#2A3A50" stroke-width="1"/>
+          <!-- FET symbols -->
+          <rect x="126" y="3" width="24" height="12" rx="1" fill="#0D1828" stroke="#2A4060" stroke-width="0.8"/>
+          <rect x="156" y="3" width="24" height="12" rx="1" fill="#0D1828" stroke="#2A4060" stroke-width="0.8"/>
+          <rect x="186" y="3" width="24" height="12" rx="1" fill="#0D1828" stroke="#2A4060" stroke-width="0.8"/>
+          <rect x="216" y="3" width="24" height="12" rx="1" fill="#0D1828" stroke="#2A4060" stroke-width="0.8"/>
+          <text x="298" y="11" class="sch-label-sm" style="fill:#4A6080;text-anchor:start;">N-FET GATES ×4</text>
+          <line x1="310" y1="9" x2="380" y2="9" class="label-line"/>
+          <text x="383" y="7" class="label-text" style="fill:#7090A8;">N-FET GATING BOARD</text>
+          <text x="383" y="16" class="label-text" style="font-size:8px;fill:#3A5060;">Backflow prevention per source</text>
+        </g>
+
+        <!-- LAYER 8: Pod rear housing -->
+        <g transform="translate(0,374)">
+          <rect x="100" y="0" width="230" height="16" rx="4" fill="#0A1420" stroke="#3A5A7A" stroke-width="1.5"/>
+          <!-- Gold contact pins -->
+          <circle cx="130" cy="8" r="3" fill="#2A2010" stroke="#A08030" stroke-width="1"/>
+          <circle cx="150" cy="8" r="3" fill="#2A2010" stroke="#A08030" stroke-width="1"/>
+          <circle cx="215" cy="8" r="3" fill="#2A2010" stroke="#A08030" stroke-width="1"/>
+          <circle cx="235" cy="8" r="3" fill="#2A2010" stroke="#A08030" stroke-width="1"/>
+          <!-- GPS window -->
+          <rect x="180" y="2" width="34" height="12" rx="2" fill="#1A1400" stroke="#3A5060" stroke-width="0.8"/>
+          <text x="383" y="9" class="label-text">REAR HOUSING</text>
+          <line x1="330" y1="8" x2="380" y2="8" class="label-line"/>
+          <text x="383" y="18" class="label-text" style="font-size:8px;fill:#3A5060;">Al 6061 · GPS window · spring contacts</text>
+        </g>
+
+        <!-- Explosion arrows (dashed lines showing separation) -->
+        <line x1="216" y1="30" x2="216" y2="54" stroke="#2A4060" stroke-width="1" stroke-dasharray="2,3"/>
+        <line x1="216" y1="70" x2="216" y2="102" stroke="#2A4060" stroke-width="1" stroke-dasharray="2,3"/>
+        <line x1="216" y1="132" x2="216" y2="160" stroke="#2A4060" stroke-width="1" stroke-dasharray="2,3"/>
+        <line x1="216" y1="198" x2="216" y2="224" stroke="#2A4060" stroke-width="1" stroke-dasharray="2,3"/>
+        <line x1="216" y1="246" x2="216" y2="274" stroke="#2A4060" stroke-width="1" stroke-dasharray="2,3"/>
+        <line x1="216" y1="302" x2="216" y2="330" stroke="#2A4060" stroke-width="1" stroke-dasharray="2,3"/>
+        <line x1="216" y1="348" x2="216" y2="374" stroke="#2A4060" stroke-width="1" stroke-dasharray="2,3"/>
+
+        <!-- Arrows pointing down -->
+        <polygon points="210,50,222,50,216,54" fill="#2A4060"/>
+        <polygon points="210,98,222,98,216,102" fill="#2A4060"/>
+        <polygon points="210,156,222,156,216,160" fill="#2A4060"/>
+        <polygon points="210,220,222,220,216,224" fill="#2A4060"/>
+        <polygon points="210,270,222,270,216,274" fill="#2A4060"/>
+        <polygon points="210,326,222,326,216,330" fill="#2A4060"/>
+        <polygon points="210,370,222,370,216,374" fill="#2A4060"/>
+
+        <!-- Band connection note -->
+        <g transform="translate(0,420)">
+          <rect x="100" y="0" width="230" height="30" rx="4" fill="none" stroke="#3A5060" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="215" y="19" class="label-text" text-anchor="middle" style="font-size:9px;fill:#4A6070;">BAND (BASE UNIT) connects via</text>
+          <text x="215" y="28" class="label-text" text-anchor="middle" style="font-size:9px;fill:#4A6070;">spring-bar lugs + 6 gold contact pins</text>
+        </g>
+
+        <text x="10" y="670" class="label-text" style="font-size:9px;">EXPLODED — TOP TO BOTTOM ASSEMBLY ORDER</text>
+      </svg>
+    </div>
+
+    <!-- BAND CROSS-SECTION -->
+    <div class="drawing-panel">
+      <div class="drawing-label">Band — Cross-Section at Mid-Point (Cut A-A)</div>
+      <svg class="drawing" viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg">
+        <rect width="520" height="380" fill="#060C14"/>
+        <rect width="520" height="380" fill="url(#grid)"/>
+
+        <!-- Cross-section: looking along the band length, cutting perpendicular -->
+        <!-- Shows 26mm width (horizontal) × ~5mm thickness (vertical) -->
+        <!-- Scale: 1mm = 8px for clarity -->
+        <!-- Width: 26mm × 8px = 208px, centered at x=220 → x from 116 to 324 -->
+        <!-- Thickness: 4.5mm × 8px = 36px, centered at y=170 → y from 152 to 188 -->
+
+        <!-- OUTER SURFACE (top in this view = back of wrist) -->
+        <!-- FKM rubber body -->
+        <rect x="110" y="150" width="220" height="50" rx="6" class="band-body"/>
+
+        <!-- PV cells on outer surface (top layer) -->
+        <!-- 3 cells across 26mm: each 8mm = 64px wide, 1mm=8px gap -->
+        <!-- Total: 3×64 + 2×8 = 208px = exactly 26mm ✓ -->
+        <rect x="110" y="150" width="64" height="10" rx="1" class="pv-cell"/>
+        <rect x="182" y="150" width="64" height="10" rx="1" class="pv-cell"/>
+        <rect x="254" y="150" width="64" height="10" rx="1" class="pv-cell"/>
+        <!-- Cell grid lines -->
+        <line x1="110" y1="155" x2="174" y2="155" stroke="#3A6090" stroke-width="0.5"/>
+        <line x1="182" y1="155" x2="246" y2="155" stroke="#3A6090" stroke-width="0.5"/>
+        <line x1="254" y1="155" x2="318" y2="155" stroke="#3A6090" stroke-width="0.5"/>
+
+        <!-- Embedded piezo element (inside band body) -->
+        <rect x="158" y="165" width="100" height="8" rx="2" class="piezo"/>
+        <text x="208" y="172" class="sch-label-sm" style="fill:#6A5AB0;font-size:8px;">PIEZO FILM</text>
+
+        <!-- EM coil conductors (in this zone they appear as circular wire cross-sections) -->
+        <!-- Show as circles: wire cross-sections in band body -->
+        <circle cx="148" cy="176" r="4" fill="#1A1000" stroke="#8A6020" stroke-width="1"/>
+        <circle cx="162" cy="178" r="4" fill="#1A1000" stroke="#8A6020" stroke-width="1"/>
+        <circle cx="176" cy="176" r="4" fill="#1A1000" stroke="#8A6020" stroke-width="1"/>
+        <circle cx="250" cy="176" r="4" fill="#1A1000" stroke="#8A6020" stroke-width="1"/>
+        <circle cx="264" cy="178" r="4" fill="#1A1000" stroke="#8A6020" stroke-width="1"/>
+        <circle cx="278" cy="176" r="4" fill="#1A1000" stroke="#8A6020" stroke-width="1"/>
+        <text x="214" y="178" class="sch-label-sm" style="fill:#8A6020;font-size:7px;">EM COIL WIRES</text>
+
+        <!-- Conductor channels (left and right edges) -->
+        <rect x="110" y="155" width="8" height="34" rx="1" fill="#0C1A10" stroke="#3A7A3A" stroke-width="0.8"/>
+        <rect x="322" y="155" width="8" height="34" rx="1" fill="#0C1A10" stroke="#3A7A3A" stroke-width="0.8"/>
+        <!-- Gold conductor wires inside channels -->
+        <line x1="114" y1="158" x2="114" y2="186" stroke="#A08030" stroke-width="1.5"/>
+        <line x1="326" y1="158" x2="326" y2="186" stroke="#A08030" stroke-width="1.5"/>
+
+        <!-- TEG contact pads on inner surface (bottom layer) -->
+        <!-- 2 pads: 16mm = 128px wide, centered at approx 1/3 and 2/3 of band width -->
+        <!-- Pad 1: x=126 to x=254 → 128px but band is 208px, pad should be 16mm=128px but that's big -->
+        <!-- Actual: 16mm × 20mm pads. In cross-section (perpendicular cut), we see the 16mm width -->
+        <!-- Two pads side by side would be 32mm but band is only 26mm — they must be centered in series along length, not side-by-side in cross-section -->
+        <!-- In THIS cross-section (perpendicular to length), we only see one pad at a time (each is 16mm wide) -->
+        <!-- Show one TEG pad spanning most of the inner surface -->
+        <rect x="118" y="190" width="200" height="10" rx="2" class="teg-pad"/>
+        <text x="218" y="198" class="sch-label-sm" style="fill:#3A7A4A;font-size:8px;">TEG CONTACT PAD (CuNi alloy)</text>
+
+        <!-- Labels and dimensions -->
+
+        <!-- Width dimension -->
+        <line x1="110" y1="230" x2="330" y2="230" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="110" y1="226" x2="110" y2="234" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="330" y1="226" x2="330" y2="234" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="220" y="248" class="dim-text" text-anchor="middle">26 mm (band width)</text>
+
+        <!-- Thickness dimension -->
+        <line x1="360" y1="150" x2="360" y2="200" stroke="#40B8E0" stroke-width="0.8" stroke-dasharray="2,3"/>
+        <line x1="356" y1="150" x2="364" y2="150" stroke="#40B8E0" stroke-width="0.8"/>
+        <line x1="356" y1="200" x2="364" y2="200" stroke="#40B8E0" stroke-width="0.8"/>
+        <text x="380" y="178" class="dim-text">~5 mm</text>
+
+        <!-- Layer labels -->
+        <line x1="110" y1="155" x2="60" y2="143" class="label-line"/>
+        <text x="58" y="141" class="label-text-grn" text-anchor="end">PV CELLS (0.2mm proud)</text>
+
+        <line x1="110" y1="190" x2="60" y2="196" class="label-line"/>
+        <circle cx="110" cy="190" r="2" class="label-dot"/>
+        <text x="58" y="194" class="label-text-grn" text-anchor="end">TEG PAD</text>
+        <text x="58" y="204" class="label-text" text-anchor="end" style="font-size:8px;">(0.6mm raised)</text>
+
+        <line x1="118" y1="170" x2="60" y2="170" class="label-line"/>
+        <text x="58" y="168" class="label-text" text-anchor="end">POWER</text>
+        <text x="58" y="178" class="label-text" text-anchor="end">CHANNEL</text>
+
+        <line x1="208" y1="165" x2="208" y2="130" class="label-line"/>
+        <text x="208" y="127" class="label-text" text-anchor="middle">PIEZO FILM</text>
+
+        <line x1="162" y1="178" x2="140" y2="130" class="label-line"/>
+        <text x="138" y="127" class="label-text-amb" text-anchor="end">EM COIL</text>
+        <text x="138" y="137" class="label-text" text-anchor="end" style="font-size:8px;">WIRE X-SECT.</text>
+
+        <!-- OUTER / INNER labels -->
+        <text x="218" y="142" class="label-text" text-anchor="middle" style="font-size:9px;fill:#3A5060;">▲ OUTER (BACK OF WRIST)</text>
+        <text x="218" y="218" class="label-text" text-anchor="middle" style="font-size:9px;fill:#3A5060;">▼ INNER (SKIN CONTACT)</text>
+
+        <!-- Rubber body label -->
+        <text x="450" y="175" class="label-text" style="font-size:9px;">FKM RUBBER</text>
+        <text x="450" y="185" class="label-text" style="font-size:9px;">BODY</text>
+        <line x1="380" y1="176" x2="440" y2="176" class="label-line"/>
+
+        <!-- Section cut annotation -->
+        <text x="10" y="290" class="label-text" style="font-size:9px;">CUT A-A — TRANSVERSE CROSS-SECTION</text>
+        <text x="10" y="300" class="label-text" style="font-size:8px;fill:#3A5060;">Looking along band length (clasp arm, mid-point)</text>
+        <text x="10" y="310" class="label-text" style="font-size:8px;fill:#3A5060;">All layers to approximate scale · EM coil in housing zone</text>
+      </svg>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 4 — ELECTRICAL SCHEMATIC                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="schematic">
+  <div class="sec-label">Section 04 / Electrical Architecture</div>
+  <div class="sec-title">Block <em>Schematic</em></div>
+
+  <div class="desc-block">
+    <strong>Note:</strong> This is a <code>BLOCK-LEVEL SCHEMATIC</code> showing signal flow and component relationships. For full KiCad/Eagle implementation, each MPPT block maps to one <code>ADP5092</code> eval circuit; the MCU block maps to <code>STM32L0 Nucleo</code> reference; LoRa maps to <code>SX1276 breakout</code>. All component datasheets are publicly available.
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="leg-item"><svg width="24" height="3"><line x1="0" y1="1.5" x2="24" y2="1.5" stroke="#E03040" stroke-width="2"/></svg> Power / VBUS</div>
+    <div class="leg-item"><svg width="24" height="3"><line x1="0" y1="1.5" x2="24" y2="1.5" stroke="#406888" stroke-width="1.5" stroke-dasharray="4,3"/></svg> Control Signal (MCU)</div>
+    <div class="leg-item"><svg width="24" height="3"><line x1="0" y1="1.5" x2="24" y2="1.5" stroke="#00C97A" stroke-width="1" stroke-dasharray="2,2"/></svg> Data / SPI / UART</div>
+    <div class="leg-item"><svg width="24" height="3"><line x1="0" y1="1.5" x2="24" y2="1.5" stroke="#3A5060" stroke-width="1.2" stroke-dasharray="5,4"/></svg> External / Output</div>
+  </div>
+
+  <div class="drawing-panel" style="margin-top:12px;">
+    <div class="drawing-label">Full System — Electrical Block Diagram</div>
+    <svg class="drawing" viewBox="0 0 920 560" xmlns="http://www.w3.org/2000/svg">
+      <rect width="920" height="560" fill="#060C14"/>
+      <rect width="920" height="560" fill="url(#grid)"/>
+
+      <!-- ── TRANSDUCERS (x=20) ── -->
+      <!-- EM Kinetic -->
+      <rect x="14" y="48" width="110" height="52" rx="3" class="sch-box-amb"/>
+      <text x="69" y="70" class="sch-title">EM KINETIC</text>
+      <text x="69" y="82" class="sch-label-sm">Coil + magnet</text>
+      <text x="69" y="92" class="sch-label-amb">2–10 mW est.</text>
+
+      <!-- TEG -->
+      <rect x="14" y="120" width="110" height="52" rx="3" class="sch-box-amb"/>
+      <text x="69" y="142" class="sch-title">TEG / SEEBECK</text>
+      <text x="69" y="154" class="sch-label-sm">Peltier module</text>
+      <text x="69" y="164" class="sch-label-amb">0.1–0.8 mW est.</text>
+
+      <!-- PV -->
+      <rect x="14" y="192" width="110" height="52" rx="3" class="sch-box-amb"/>
+      <text x="69" y="214" class="sch-title">PHOTOVOLTAIC</text>
+      <text x="69" y="226" class="sch-label-sm">Flex GaAs cells</text>
+      <text x="69" y="236" class="sch-label-amb">0.5–40 mW est.</text>
+
+      <!-- Piezo -->
+      <rect x="14" y="264" width="110" height="52" rx="3" class="sch-box-amb"/>
+      <text x="69" y="286" class="sch-title">PIEZOELECTRIC</text>
+      <text x="69" y="298" class="sch-label-sm">Flex film</text>
+      <text x="69" y="308" class="sch-label-amb">0.05–1 mW est.</text>
+
+      <!-- ── MPPT PMICs (x=164) ── -->
+      <rect x="158" y="48" width="100" height="52" rx="3" class="sch-box-cyan"/>
+      <text x="208" y="68" class="sch-title">MPPT #1</text>
+      <text x="208" y="80" class="sch-label-sm">ADP5092</text>
+      <text x="208" y="91" class="sch-label-cyan">per-source MPPT</text>
+
+      <rect x="158" y="120" width="100" height="52" rx="3" class="sch-box-cyan"/>
+      <text x="208" y="140" class="sch-title">MPPT #2</text>
+      <text x="208" y="152" class="sch-label-sm">ADP5092</text>
+      <text x="208" y="163" class="sch-label-cyan">per-source MPPT</text>
+
+      <rect x="158" y="192" width="100" height="52" rx="3" class="sch-box-cyan"/>
+      <text x="208" y="212" class="sch-title">MPPT #3</text>
+      <text x="208" y="224" class="sch-label-sm">ADP5092</text>
+      <text x="208" y="235" class="sch-label-cyan">per-source MPPT</text>
+
+      <rect x="158" y="264" width="100" height="52" rx="3" class="sch-box-cyan"/>
+      <text x="208" y="284" class="sch-title">MPPT #4</text>
+      <text x="208" y="296" class="sch-label-sm">ADP5092</text>
+      <text x="208" y="307" class="sch-label-cyan">per-source MPPT</text>
+
+      <!-- ── N-FET GATES (x=300) ── -->
+      <rect x="296" y="55" width="32" height="28" rx="2" fill="#0E1828" stroke="#406888" stroke-width="1.2"/>
+      <text x="312" y="70" class="sch-label-sm" style="fill:#506888;">FET1</text>
+      <rect x="296" y="127" width="32" height="28" rx="2" fill="#0E1828" stroke="#406888" stroke-width="1.2"/>
+      <text x="312" y="142" class="sch-label-sm" style="fill:#506888;">FET2</text>
+      <rect x="296" y="199" width="32" height="28" rx="2" fill="#0E1828" stroke="#406888" stroke-width="1.2"/>
+      <text x="312" y="214" class="sch-label-sm" style="fill:#506888;">FET3</text>
+      <rect x="296" y="271" width="32" height="28" rx="2" fill="#0E1828" stroke="#406888" stroke-width="1.2"/>
+      <text x="312" y="286" class="sch-label-sm" style="fill:#506888;">FET4</text>
+
+      <!-- ── POWER BUS (vertical line x=360) ── -->
+      <line x1="360" y1="30" x2="360" y2="380" stroke="#E03040" stroke-width="2.5"/>
+      <text x="360" y="22" class="sch-label-red" style="font-size:9px;">VBUS (3.3–4.2V)</text>
+
+      <!-- ── STM32L0 MCU (x=380, y=360) ── -->
+      <rect x="278" y="380" width="180" height="90" rx="4" class="sch-box"/>
+      <text x="368" y="408" class="sch-title" style="font-size:14px;">STM32L0</text>
+      <text x="368" y="422" class="sch-label-sm">500ms poll cycle</text>
+      <text x="368" y="435" class="sch-label-sm">4× ADC inputs</text>
+      <text x="368" y="448" class="sch-label-sm">SPI + UART + GPIO</text>
+      <text x="368" y="460" class="sch-label-cyan" style="font-size:9px;">DYNAMIC LOAD ROUTING</text>
+
+      <!-- ── USB-C CHARGER (x=570, y=380) ── -->
+      <rect x="484" y="380" width="130" height="60" rx="3" class="sch-box"/>
+      <text x="549" y="403" class="sch-title">TP4056</text>
+      <text x="549" y="416" class="sch-label-sm">LiPo charge IC</text>
+      <text x="549" y="428" class="sch-label-sm">USB-C input</text>
+      <text x="549" y="440" class="sch-label-cyan" style="font-size:8px;">PRE-CHARGE AT DEPLOY</text>
+
+      <!-- ── STORAGE (x=500) ── -->
+      <rect x="484" y="68" width="130" height="60" rx="3" class="sch-box-grn"/>
+      <text x="549" y="90" class="sch-title">LiPo 400mAh</text>
+      <text x="549" y="103" class="sch-label-sm">3.7V nominal</text>
+      <text x="549" y="116" class="sch-label-grn">72hr reserve</text>
+
+      <rect x="484" y="148" width="130" height="52" rx="3" class="sch-box-grn"/>
+      <text x="549" y="170" class="sch-title">SUPERCAP 1F</text>
+      <text x="549" y="183" class="sch-label-sm">5.5V, burst buffer</text>
+      <text x="549" y="194" class="sch-label-grn">LoRa TX peaks</text>
+
+      <!-- ── LOADS (x=680) ── -->
+      <rect x="670" y="48" width="150" height="70" rx="3" class="sch-box-red"/>
+      <text x="745" y="72" class="sch-title">LoRa SX1276</text>
+      <text x="745" y="84" class="sch-label-sm">865 MHz ISM</text>
+      <text x="745" y="96" class="sch-label-sm">GPS beacon 30s</text>
+      <text x="745" y="108" class="sch-label-red">~0.8 mW avg</text>
+
+      <rect x="670" y="138" width="150" height="70" rx="3" class="sch-box-red"/>
+      <text x="745" y="162" class="sch-title">GPS NEO-M8N</text>
+      <text x="745" y="174" class="sch-label-sm">u-blox, deep sleep</text>
+      <text x="745" y="186" class="sch-label-sm">ID-only fallback</text>
+      <text x="745" y="198" class="sch-label-red">15mW/1mW sleep</text>
+
+      <rect x="670" y="228" width="150" height="70" rx="3" class="sch-box-red"/>
+      <text x="745" y="252" class="sch-title">LED STROBE</text>
+      <text x="745" y="264" class="sch-label-sm">Morse SOS (···−−−···)</text>
+      <text x="745" y="276" class="sch-label-sm">200m visibility</text>
+      <text x="745" y="288" class="sch-label-red">~15 mW (5% duty)</text>
+
+      <!-- ── RESCUE RECEIVER (dashed, external) ── -->
+      <rect x="838" y="60" width="74" height="180" rx="4" class="sch-box-dash"/>
+      <text x="875" y="90" class="sch-title" style="fill:#3A5060;">RESCUE</text>
+      <text x="875" y="104" class="sch-title" style="fill:#3A5060;">RECEIVER</text>
+      <text x="875" y="120" class="sch-label-sm" style="fill:#2A3A50;">LoRa RX</text>
+      <text x="875" y="134" class="sch-label-sm" style="fill:#2A3A50;">→ Dashboard</text>
+      <text x="875" y="150" class="sch-label-sm" style="fill:#2A3A50;">GPS map</text>
+      <text x="875" y="164" class="sch-label-sm" style="fill:#2A3A50;">device ID</text>
+      <text x="875" y="178" class="sch-label-sm" style="fill:#2A3A50;">battery</text>
+      <text x="875" y="192" class="sch-label-sm" style="fill:#2A3A50;">SOS status</text>
+      <text x="875" y="220" class="sch-label-sm" style="fill:#2A4050;font-size:8px;">EXTERNAL UNIT</text>
+      <text x="875" y="230" class="sch-label-sm" style="fill:#2A4050;font-size:8px;">(NOT ON WEARABLE)</text>
+
+      <!-- ── CONNECTIONS ── -->
+
+      <!-- Transducers → PMICs (power) -->
+      <line x1="124" y1="74" x2="158" y2="74" class="pwr-line"/>
+      <line x1="124" y1="146" x2="158" y2="146" class="pwr-line"/>
+      <line x1="124" y1="218" x2="158" y2="218" class="pwr-line"/>
+      <line x1="124" y1="290" x2="158" y2="290" class="pwr-line"/>
+
+      <!-- PMICs → N-FETs (power) -->
+      <line x1="258" y1="74" x2="296" y2="69" class="pwr-line"/>
+      <line x1="258" y1="146" x2="296" y2="141" class="pwr-line"/>
+      <line x1="258" y1="218" x2="296" y2="213" class="pwr-line"/>
+      <line x1="258" y1="290" x2="296" y2="285" class="pwr-line"/>
+
+      <!-- N-FETs → Power bus -->
+      <line x1="328" y1="69" x2="360" y2="69" class="pwr-line"/>
+      <line x1="328" y1="141" x2="360" y2="141" class="pwr-line"/>
+      <line x1="328" y1="213" x2="360" y2="213" class="pwr-line"/>
+      <line x1="328" y1="285" x2="360" y2="285" class="pwr-line"/>
+
+      <!-- Power bus → LiPo -->
+      <line x1="360" y1="98" x2="484" y2="98" class="pwr-line"/>
+      <!-- Power bus → Supercap -->
+      <line x1="360" y1="174" x2="484" y2="174" class="pwr-line"/>
+
+      <!-- Power bus → Loads -->
+      <line x1="360" y1="83" x2="670" y2="83" class="pwr-line" stroke-dasharray="none"/>
+      <line x1="360" y1="173" x2="484" y2="173" class="pwr-line"/>
+      <!-- LoRa power from bus via supercap -->
+      <line x1="614" y1="174" x2="670" y2="83" class="pwr-line" stroke-dasharray="4,3"/>
+      <line x1="614" y1="174" x2="670" y2="173" class="pwr-line" stroke-dasharray="4,3"/>
+      <line x1="614" y1="174" x2="670" y2="263" class="pwr-line" stroke-dasharray="4,3"/>
+
+      <!-- MCU → Power bus (ADC monitoring lines going up) -->
+      <line x1="368" y1="380" x2="368" y2="340" stroke="#406888" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <line x1="368" y1="340" x2="312" y2="340" stroke="#406888" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <!-- MCU → FET1-4 control lines -->
+      <line x1="312" y1="340" x2="312" y2="299" stroke="#406888" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <line x1="312" y1="299" x2="312" y2="227" stroke="#406888" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <line x1="312" y1="227" x2="312" y2="155" stroke="#406888" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <line x1="312" y1="155" x2="312" y2="83" stroke="#406888" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <!-- Arrowheads toward FETs -->
+      <polygon points="308,72,316,72,312,68" fill="#406888"/>
+      <polygon points="308,144,316,144,312,140" fill="#406888"/>
+      <polygon points="308,216,316,216,312,212" fill="#406888"/>
+      <polygon points="308,288,316,288,312,284" fill="#406888"/>
+
+      <!-- MCU → LoRa (SPI data) -->
+      <line x1="458" y1="425" x2="540" y2="425" stroke="#00C97A" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="540" y1="425" x2="540" y2="83" stroke="#00C97A" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="540" y1="83" x2="670" y2="83" stroke="#00C97A" stroke-width="1" stroke-dasharray="2,2"/>
+      <!-- MCU → GPS (UART) -->
+      <line x1="540" y1="173" x2="670" y2="173" stroke="#00C97A" stroke-width="1" stroke-dasharray="2,2"/>
+      <!-- MCU → LED (GPIO) -->
+      <line x1="540" y1="263" x2="670" y2="263" stroke="#00C97A" stroke-width="1" stroke-dasharray="2,2"/>
+
+      <!-- MCU data lines going right -->
+      <line x1="458" y1="410" x2="540" y2="410" stroke="#406888" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Load switching (power routing) from MCU -->
+      <text x="495" y="407" class="sch-label-sm" style="fill:#406888;font-size:8px;">PWR SW</text>
+
+      <!-- TP4056 → LiPo -->
+      <line x1="549" y1="380" x2="549" y2="200" class="pwr-line" stroke-dasharray="3,3"/>
+      <polygon points="545,200,553,200,549,196" fill="#E03040"/>
+
+      <!-- LoRa → Rescue receiver (RF link) -->
+      <line x1="820" y1="83" x2="838" y2="110" stroke="#3A5060" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <line x1="820" y1="173" x2="838" y2="150" stroke="#3A5060" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <text x="829" y="128" class="sch-label-sm" style="fill:#2A4050;font-size:8px;">RF ≈2km</text>
+
+      <!-- Section labels -->
+      <text x="69" y="350" class="sch-label-sm" style="font-size:9px;fill:#3A4A5A;">ENERGY SOURCES</text>
+      <text x="208" y="350" class="sch-label-sm" style="font-size:9px;fill:#3A4A5A;">MPPT PMICs</text>
+      <text x="312" y="350" class="sch-label-sm" style="font-size:9px;fill:#3A4A5A;">N-FETs</text>
+      <text x="549" y="350" class="sch-label-sm" style="font-size:9px;fill:#3A4A5A;">STORAGE</text>
+      <text x="745" y="350" class="sch-label-sm" style="font-size:9px;fill:#3A4A5A;">SOS LOADS</text>
+
+      <!-- MCU label with detail -->
+      <text x="368" y="492" class="sch-label-sm" style="fill:#3A5060;font-size:8px;">MCU polls every 500ms · routes load to strongest combo</text>
+      <text x="549" y="492" class="sch-label-sm" style="fill:#3A5060;font-size:8px;">LiPo = long-term · Supercap = burst peaks</text>
+
+      <text x="10" y="540" class="label-text" style="font-size:9px;">HARVEST SOS — BLOCK SCHEMATIC — All values estimated</text>
+    </svg>
+  </div>
+
+  <div class="desc-block" style="margin-top:16px;">
+    <strong>How to read this schematic:</strong> Power flows left → right (red lines). The STM32L0 sits below the main power path and sends <strong>control signals upward</strong> (blue dashed) to each N-FET gate, turning off any source below its threshold voltage. It also sends <strong>data/SPI/UART signals rightward</strong> (green dashed) to command the LoRa radio and GPS. The supercapacitor is in parallel with the LiPo and absorbs LoRa TX current spikes (~120 mA for 10ms) that the battery alone could not cleanly supply. The rescue receiver is a separate hardware unit at the incident command post — <code>NOT</code> part of the wearable.
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="padding:24px max(24px,5vw);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+  <div style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:0.1em;">HARVEST SOS — TECHNICAL REFERENCE · IMPERIAL COLLEGE STEMATHON INDIA 2026 · INTERNAL USE</div>
+  <div style="font-family:var(--fm);font-size:9px;color:var(--muted);">ALL DIMS MM · ALL POWER VALUES ESTIMATED — PROTOTYPE WILL DETERMINE ACTUAL</div>
+</div>
+
+</body>
+</html>
